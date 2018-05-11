@@ -6,14 +6,12 @@ import cfg
 import random
 
 class Line:
-    def __init__(self, length, numSegments):
-        self.length = length
+    def __init__(self, numSegments):
         self.numSegments = numSegments
-        self.points = np.array(list(itertools.chain.from_iterable([(cfg.windowWidthHalf 
-                         + self.length * i, cfg.windowHeightHalf) for i in range(numSegments + 1)])), 
-                               dtype="float32")
-        self.cols = [random.randint(0,255) for i in range((numSegments + 1) * 3)]
-        self.thetas = np.zeros(numSegments)
+        self.points = np.array(list(itertools.chain.from_iterable([(i, 0) for i in range(numSegments + 1)])))
+        self.cols = [random.randint(0,255) for i in range((self.numSegments + 1) * 3)]
+        self.thetas = np.zeros(self.numSegments)
+        self.segmentVels = np.zeros(self.numSegments)
         
     def update(self):
         
@@ -30,7 +28,11 @@ class Window(pyglet.window.Window):
         pyglet.clock.schedule_interval(self.update, 1.0/fps)
         pyglet.clock.set_fps_limit(fps)
         
-        self.line = Line(cfg.lineLength, cfg.numSegments)
+        self.line = Line(cfg.numSegments)
+        
+        self.correctArray = np.array(list(itertools.chain.from_iterable([(cfg.windowWidthHalf 
+                         + cfg.lineLength * i, cfg.windowHeightHalf) for i in range(cfg.numSegments + 1)])), 
+                               dtype="float32")
 
         self.pygline = pyglet.graphics.vertex_list(cfg.numSegments + 1,
             ('v2f/stream', self.line.points),
@@ -39,7 +41,7 @@ class Window(pyglet.window.Window):
     
     
     def update(self, dt):
-        self.pygline.vertices = self.line.update()
+        self.pygline.vertices = self.line.update() + self.correctArray
         
     
     def on_draw(self):
