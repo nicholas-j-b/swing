@@ -1,0 +1,35 @@
+import pyglet
+import numpy as np
+
+class Window(pyglet.window.Window):
+    super().__init__()
+    fps = 30.0
+    pyglet.clock.schedule_interval(self.update, 1.0/fps)
+    pyglet.clock.set_fps_limit(fps)
+    self.line1 = pyglet.graphics.vertex_list(2,
+        ('v2i/stream', (10, 15, 30, 35)),
+        ('c3B/static', (0, 0, 255, 0, 255, 0))
+    )
+    
+    
+    def update(self):
+        pass
+    
+    
+    def on_draw(self):
+        self.clear()
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    window = Window()
+    pyglet.app.run()
